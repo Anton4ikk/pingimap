@@ -1,0 +1,18 @@
+{
+  "name": "@pingimap/config",
+  "version": "1.0.0",
+  "private": true,
+  "files": [
+    "*.js",
+    "*.json"
+  ],
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-svelte": "^2.0.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-svelte": "^3.0.0"
+  }
+}

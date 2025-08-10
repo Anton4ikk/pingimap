@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ServiceStatus {
+  UP
+  SLOW
+  DOWN
+  BLOCKED
+}
+
+model Service {
+  id              String        @id @default(uuid()) @db.Uuid
+  name            String
+  url             String        @unique
+  lastLatencyMs   Int?          @map("last_latency_ms")
+  lastStatus      ServiceStatus? @map("last_status")
+  lastCheckedAt   DateTime?     @map("last_checked_at") @db.Timestamptz
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  checks          ServiceCheck[]
+
+  @@index([lastStatus], name: "service_last_status")
+  @@index([lastCheckedAt], name: "service_last_checked")
+  @@index([createdAt], name: "service_created_at")
+  @@map("services")
+}
+
+model ServiceCheck {
+  id          String        @id @default(uuid()) @db.Uuid
+  serviceId   String        @map("service_id") @db.Uuid
+  ts          DateTime      @default(now()) @db.Timestamptz
+  latencyMs   Int?          @map("latency_ms")
+  status      ServiceStatus
+  httpCode    Int?          @map("http_code")
+  errorText   String?       @map("error_text")
+  service     Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId, ts(sort: Desc)], name: "service_check_service_ts")
+  @@map("service_checks")
+}

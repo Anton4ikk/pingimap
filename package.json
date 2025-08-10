@@ -1,0 +1,20 @@
+{
+  "name": "pingimap-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@8.15.1",
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "test:watch": "pnpm --filter=@pingimap/api test:watch",
+    "dev": "pnpm -r dev",
+    "clean": "pnpm -r clean",
+    "seed:services": "tsx scripts/seed-services.ts"
+  },
+  "devDependencies": {
+    "@pingimap/config": "workspace:*",
+    "@pingimap/tsconfig": "workspace:*",
+    "tsx": "^4.0.0"
+  }
+}

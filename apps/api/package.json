@@ -1,0 +1,36 @@
+{
+  "name": "@pingimap/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "seed": "tsx ../../scripts/seed-services.ts",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.0.0",
+    "@prisma/client": "^6.13.0",
+    "fastify": "^4.0.0",
+    "nats": "^2.0.0",
+    "pg": "^8.11.0",
+    "prisma": "^6.13.0"
+  },
+  "devDependencies": {
+    "@pingimap/config": "workspace:*",
+    "@pingimap/env-config": "workspace:*",
+    "@pingimap/tsconfig": "workspace:*",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.10.0",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.1.4",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

@@ -1,0 +1,122 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pingimap
+      POSTGRES_USER: pingimap
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pingimap -d pingimap"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pingimap
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+
+  nats:
+    image: nats:2.10-alpine
+    ports:
+      - "${NATS_CLIENT_PORT:-4222}:4222"
+      - "${NATS_HTTP_PORT:-8222}:8222"
+      - "${NATS_CLUSTER_PORT:-6222}:6222"
+    command:
+      - "--http_port"
+      - "8222"
+      - "--port"
+      - "4222"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 4222"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pingimap
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    user: "1000:1000"
+    tmpfs:
+      - /tmp
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "${API_PORT:-3001}:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      DATABASE_URL: postgresql://pingimap:${POSTGRES_PASSWORD}@postgres:5432/pingimap
+      NATS_URL: nats://nats:4222
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      PING_TIMEOUT_MS: ${PING_TIMEOUT_MS:-5000}
+      FAST_THRESHOLD_MS: ${FAST_THRESHOLD_MS:-1000}
+      SLOW_THRESHOLD_MS: ${SLOW_THRESHOLD_MS:-2000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - pingimap
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    user: "node"
+    tmpfs:
+      - /tmp
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      API_BASE_URL: http://api:${API_PORT:-3001}
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - pingimap
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    user: "node"
+    tmpfs:
+      - /tmp
+
+volumes:
+  postgres_data:
+
+networks:
+  pingimap:
+    driver: bridge

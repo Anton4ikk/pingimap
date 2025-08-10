@@ -1,0 +1,58 @@
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+
+const API_BASE = process.env.API_BASE_URL || 'http://localhost:3001';
+
+interface ImportService {
+    name: string;
+    url: string;
+}
+
+interface BulkImportRequest {
+    services: ImportService[];
+}
+
+interface BulkImportResponse {
+    imported: number;
+    skipped: number;
+    errors: string[];
+}
+
+export const POST: RequestHandler = async ({ request }) => {
+    try {
+        const body: BulkImportRequest = await request.json();
+        const authHeader = request.headers.get('authorization');
+
+        if (!body.services || !Array.isArray(body.services)) {
+            throw error(400, 'Invalid request: services array is required');
+        }
+
+        const headers: HeadersInit = {
+            'Content-Type': 'application/json',
+        };
+
+        if (authHeader) {
+            headers.authorization = authHeader;
+        }
+
+        const response = await fetch(`${API_BASE}/api/services/bulk`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw error(response.status, errorData.message || 'Failed to import services');
+        }
+
+        const result: BulkImportResponse = await response.json();
+        return json(result);
+    } catch (err) {
+        console.error('Failed to import services:', err);
+        if (err && typeof err === 'object' && 'status' in err) {
+            throw err;
+        }
+        throw error(500, 'Failed to import services');
+    }
+};
