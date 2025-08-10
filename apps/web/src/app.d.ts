@@ -8,6 +8,12 @@ declare global {
         interface PageState {}
         interface Platform {}
     }
+
+    namespace NodeJS {
+        interface ProcessEnv {
+            API_BASE_URL?: string;
+        }
+    }
 }
 
 export { };

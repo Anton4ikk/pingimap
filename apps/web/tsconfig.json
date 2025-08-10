@@ -8,6 +8,7 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "lib": ["esnext", "DOM", "DOM.Iterable"],
+    "types": ["node"],
     "moduleResolution": "node",
     "module": "esnext",
     "noEmit": true,

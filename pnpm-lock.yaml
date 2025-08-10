@@ -105,6 +105,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.2
         version: 2.5.3(svelte@4.2.20)(vite@4.5.14)
+      '@types/node':
+        specifier: ^20.19.10
+        version: 20.19.10
       svelte:
         specifier: ^4.0.5
         version: 4.2.20
@@ -119,7 +122,7 @@ importers:
         version: 5.9.2
       vite:
         specifier: ^4.4.2
-        version: 4.5.14
+        version: 4.5.14(@types/node@20.19.10)
 
   packages/config:
     dependencies:
@@ -1322,7 +1325,7 @@ packages:
       svelte: 4.2.20
       tiny-glob: 0.2.9
       undici: 5.29.0
-      vite: 4.5.14
+      vite: 4.5.14(@types/node@20.19.10)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1338,7 +1341,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.5.3(svelte@4.2.20)(vite@4.5.14)
       debug: 4.4.1
       svelte: 4.2.20
-      vite: 4.5.14
+      vite: 4.5.14(@types/node@20.19.10)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1357,7 +1360,7 @@ packages:
       magic-string: 0.30.17
       svelte: 4.2.20
       svelte-hmr: 0.15.3(svelte@4.2.20)
-      vite: 4.5.14
+      vite: 4.5.14(@types/node@20.19.10)
       vitefu: 0.2.5(vite@4.5.14)
     transitivePeerDependencies:
       - supports-color
@@ -4165,7 +4168,7 @@ packages:
       - terser
     dev: true
 
-  /vite@4.5.14:
+  /vite@4.5.14(@types/node@20.19.10):
     resolution: {integrity: sha512-+v57oAaoYNnO3hIu5Z/tJRZjq5aHM2zDve9YZ8HngVHbhk66RStobhb1sqPMIPEleV6cNKYK4eGrAbE9Ulbl2g==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -4193,6 +4196,7 @@ packages:
       terser:
         optional: true
     dependencies:
+      '@types/node': 20.19.10
       esbuild: 0.18.20
       postcss: 8.5.6
       rollup: 3.29.5
@@ -4247,7 +4251,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.5.14
+      vite: 4.5.14(@types/node@20.19.10)
     dev: true
 
   /vitest@1.6.1(@types/node@20.19.10):
