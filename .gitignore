@@ -1,1 +1,21 @@
+# Dependencies
 node_modules
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+
+# SvelteKit
+.svelte-kit/
+
+# Cache directories
+.cache/
+.turbo/
+.next/
+.vite/
+
+# Environment files
+.env
+.env.local
+.env.*.local

@@ -9,6 +9,9 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/api/prisma ./apps/api/prisma
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
+# Install workspace dependencies specifically for API
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm --filter @pingimap/api install --frozen-lockfile
 
 
 FROM base AS builder
@@ -18,8 +21,17 @@ COPY --from=deps /app/packages ./packages
 COPY --from=deps /app/package.json ./package.json
 COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY apps/api/ ./apps/api/
-RUN pnpm --filter @pingimap/api exec prisma generate
+COPY --from=deps /app/apps/api/package.json ./apps/api/package.json
+COPY --from=deps /app/apps/api/prisma ./apps/api/prisma
+COPY apps/api/src ./apps/api/src
+COPY apps/api/tsconfig.json ./apps/api/tsconfig.json
+WORKDIR /app/apps/api
+RUN npx prisma generate
+WORKDIR /app
+# Build workspace dependencies first
+RUN pnpm --filter @pingimap/env-config build
+RUN pnpm --filter @pingimap/lib build
+# Then build the API
 RUN pnpm --filter=@pingimap/api build
 
 FROM base AS runner
@@ -36,6 +48,10 @@ COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=deps /app/packages ./packages
 COPY --from=deps /app/apps/api/package.json ./apps/api/package.json
+
+# Copy built workspace dependencies from builder stage
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/node_modules ./node_modules
 
 # Install all dependencies (including dev dependencies for tsx)
 RUN pnpm --filter=@pingimap/api install --frozen-lockfile

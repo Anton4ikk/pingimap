@@ -1,10 +1,20 @@
+<div align="center">
+
 # 🚀 PingiMap
 
-A modern service monitoring platform with real-time status tracking, interactive dashboard, and role-based access control. Built with Docker, SvelteKit, and Fastify.
+<img src="./media/logo.png" alt="PingiMap Logo" width="120" height="120" style="border-radius: 20px;">
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Docker](https://img.shields.io/badge/docker-ready-blue.svg)
-![Node.js](https://img.shields.io/badge/node-20+-green.svg)
+**A modern service monitoring platform with real-time status tracking, interactive dashboard, and role-based access control.**
+
+*Built with Docker, SvelteKit, and Fastify*
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](docker-compose.yml)
+[![Node.js](https://img.shields.io/badge/node-20+-green.svg)](package.json)
+
+[🚀 Quick Start](#-quick-start) • [📖 Documentation](DEPLOYMENT.md) • [🛠️ Development](#️-development) • [🐛 Issues](https://github.com/Anton4ikk/pingimap/issues)
+
+</div>
 
 ## ✨ Features
 
@@ -162,25 +172,40 @@ POST /api/services/bulk         # Bulk import services
 ### Development Setup
 
 ```bash
-# Start development environment (builds all dependencies in Docker)
+# 1. Clone and navigate to project
+git clone https://github.com/Anton4ikk/pingimap.git
+cd pingimap
+
+# 2. IMPORTANT: Create environment file
+cp .env.example .env
+nano .env
+# Configure required variables:
+# - ADMIN_PASSWORD=dev-password-123
+# - JWT_SECRET=development-secret-key-32-chars
+# - POSTGRES_PASSWORD=dev-db-password
+
+# 3. Start containerized development environment
 docker compose build --no-cache
 docker compose up -d
 
-# View logs
+# 4. View logs and verify services
 docker compose logs -f
 
-# For local development (optional)
+# 5. Optional: Local development (for IDE support)
 pnpm install
 
-# Develop individual services
-cd apps/web && pnpm dev      # Frontend development
-cd apps/api && pnpm dev      # Backend development
+# 6. Individual service development
+cd apps/web && pnpm dev      # Frontend on localhost:5173
+cd apps/api && pnpm dev      # Backend on localhost:3001
 
-# Database operations
+# 7. Database operations
 cd apps/api
 pnpm dlx prisma generate     # Generate Prisma client
-pnpm dlx prisma studio       # Database GUI
+pnpm dlx prisma studio       # Database GUI on localhost:5555
+pnpm dlx prisma migrate dev  # Run database migrations
 ```
+
+> **⚠️ Important**: Always copy your `.env` file from `.env.example` and configure it properly. The `.env` file is git-ignored to prevent accidentally committing secrets.
 
 ### Project Structure
 ```
