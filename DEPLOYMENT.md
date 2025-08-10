@@ -98,22 +98,22 @@ sudo apt install nginx certbot python3-certbot-nginx -y
 
 ### Configure Nginx
 
-Create `/etc/nginx/sites-available/pingimap.com`:
+Create `/etc/nginx/sites-available/domain.com`:
 
 ```nginx
 server {
     listen 80;
-    server_name pingimap.com www.pingimap.com;
+    server_name domain.com www.domain.com;
     return 301 https://$server_name$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name pingimap.com www.pingimap.com;
+    server_name domain.com www.domain.com;
 
     # SSL Configuration (certbot will add these)
-    ssl_certificate /etc/letsencrypt/live/pingimap.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/pingimap.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/domain.com/privkey.pem;
 
     # Security Headers
     add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
