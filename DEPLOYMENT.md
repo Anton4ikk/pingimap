@@ -77,14 +77,15 @@ NATS_CLUSTER_PORT=6222
 ### Step 4: Start Services
 
 ```bash
-# Start all services
-docker-compose up -d
+# Build and start all services (fresh build)
+docker compose build --no-cache
+docker compose up -d
 
 # Verify all services are healthy
-docker-compose ps
+docker compose ps
 
 # Check logs
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ## 🌐 HTTPS Setup with Nginx
@@ -208,15 +209,15 @@ The application includes these security measures:
 
 ```bash
 # Check service health
-docker-compose ps
-docker-compose logs --tail=50 -f
+docker compose ps
+docker compose logs --tail=50 -f
 
 # Monitor resource usage
 docker stats
 
 # Check specific service logs
-docker-compose logs -f web
-docker-compose logs -f api
+docker compose logs -f web
+docker compose logs -f api
 ```
 
 ### System Health Endpoints
@@ -283,7 +284,7 @@ curl -X POST https://pingimap.com/api/services \
 
 ```bash
 # Backup database
-docker-compose exec postgres pg_dump -U pingimap pingimap > backup.sql
+docker compose exec postgres pg_dump -U pingimap pingimap > backup.sql
 
 # Backup configuration
 cp .env .env.backup
@@ -296,20 +297,20 @@ cp docker-compose.yml docker-compose.yml.backup
 # Pull latest changes
 git pull origin main
 
-# Rebuild and restart
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
+# Rebuild and restart (clean build)
+docker compose down
+docker compose build --no-cache
+docker compose up -d
 
 # Verify health
-docker-compose ps
+docker compose ps
 ```
 
 ### Database Migrations
 
 ```bash
 # Run database migrations (if needed)
-docker-compose exec api pnpm --filter=@pingimap/api prisma migrate deploy
+docker compose exec api pnpm --filter=@pingimap/api prisma migrate deploy
 ```
 
 ## 📊 Performance Optimization
@@ -357,11 +358,13 @@ SLOW_THRESHOLD_MS=5000
 # Check Docker daemon
 sudo systemctl status docker
 
-# Check logs
-docker-compose logs
+# Check logs and rebuild
+docker compose logs
 
-# Restart everything
-docker-compose down && docker-compose up -d
+# Restart everything with clean build
+docker compose down
+docker compose build --no-cache
+docker compose up -d
 ```
 
 **2. SSL Issues**
@@ -377,10 +380,10 @@ sudo certbot renew
 **3. Database Connection Issues**
 ```bash
 # Check PostgreSQL container
-docker-compose logs postgres
+docker compose logs postgres
 
 # Test database connection
-docker-compose exec postgres pg_isready -U pingimap
+docker compose exec postgres pg_isready -U pingimap
 ```
 
 **4. Permission Issues**
@@ -395,10 +398,11 @@ sudo chmod +x scripts/*
 **Complete Reset (Nuclear Option)**
 ```bash
 # This removes ALL data - use with caution
-docker-compose down -v
+docker compose down -v
 docker system prune -a
 git pull origin main
-docker-compose up -d
+docker compose build --no-cache
+docker compose up -d
 ```
 
 ## 📋 Production Checklist

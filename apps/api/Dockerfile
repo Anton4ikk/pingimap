@@ -13,6 +13,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
+COPY --from=deps /app/package.json ./package.json
+COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY apps/api/ ./apps/api/
 RUN cd apps/api && pnpm dlx prisma generate
 RUN pnpm --filter=@pingimap/api build

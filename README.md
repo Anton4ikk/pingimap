@@ -36,14 +36,15 @@ nano .env
 # - JWT_SECRET=your-32-character-secret
 # - POSTGRES_PASSWORD=your-db-password
 
-# 3. Start all services
-docker-compose up -d
+# 3. Build and start all services (clean build)
+docker compose build --no-cache
+docker compose up -d
 
 # 4. Verify services are running
-docker-compose ps
+docker compose ps
 
 # 5. Optional: Add example services
-docker-compose exec api pnpm --filter=@pingimap/api seed
+docker compose exec api pnpm --filter=@pingimap/api seed
 ```
 
 ### 🌐 Access Your Installation
@@ -161,14 +162,15 @@ POST /api/services/bulk         # Bulk import services
 ### Development Setup
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Start development environment
-docker-compose up -d
+# Start development environment (builds all dependencies in Docker)
+docker compose build --no-cache
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
+
+# For local development (optional)
+pnpm install
 
 # Develop individual services
 cd apps/web && pnpm dev      # Frontend development
@@ -221,12 +223,13 @@ pingimap/
 
 **Services won't start:**
 ```bash
-# Check for port conflicts
-docker-compose down
-docker-compose up -d
+# Check for port conflicts and rebuild
+docker compose down
+docker compose build --no-cache
+docker compose up -d
 
 # View logs
-docker-compose logs
+docker compose logs
 ```
 
 **Database connection errors:**
@@ -238,9 +241,10 @@ docker-compose exec postgres pg_isready -U pingimap
 
 **Reset everything:**
 ```bash
-# Nuclear option - removes all data
-docker-compose down -v
-docker-compose up -d
+# Nuclear option - removes all data and rebuilds
+docker compose down -v
+docker compose build --no-cache
+docker compose up -d
 ```
 
 ### Health Checks
@@ -259,7 +263,7 @@ curl http://localhost:3001/api/services
 
 1. **Fork** the repository
 2. **Create** feature branch (`git checkout -b feature/amazing-feature`)
-3. **Setup** development environment (`docker-compose up -d`)
+3. **Setup** development environment (`docker compose up -d`)
 4. **Make** your changes with tests
 5. **Commit** changes (`git commit -m 'Add amazing feature'`)
 6. **Push** to branch (`git push origin feature/amazing-feature`)
