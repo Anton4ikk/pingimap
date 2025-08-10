@@ -4,16 +4,16 @@ const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3001';
 
 export const GET: RequestHandler = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/info`);
+    const response = await fetch(`${API_BASE_URL}/health`);
 
     if (!response.ok) {
       throw new Error(`API responded with status ${response.status}`);
     }
 
-    const data = await response.text(); // Get HTML response
-    return new Response(data, {
+    const data = await response.json(); // Get JSON response
+    return new Response(JSON.stringify(data), {
       headers: {
-        'Content-Type': 'text/html',
+        'Content-Type': 'application/json',
       },
     });
   } catch (error) {

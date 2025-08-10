@@ -1,12 +1,13 @@
 FROM node:20-alpine AS base
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
 
 FROM base AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
 COPY packages/ ./packages/
 COPY apps/api/package.json ./apps/api/
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
 
 
 FROM base AS builder
@@ -17,7 +18,7 @@ COPY --from=deps /app/package.json ./package.json
 COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY apps/api/ ./apps/api/
-RUN cd apps/api && pnpm dlx prisma generate
+RUN pnpm --filter @pingimap/api exec prisma generate
 RUN pnpm --filter=@pingimap/api build
 
 FROM base AS runner
