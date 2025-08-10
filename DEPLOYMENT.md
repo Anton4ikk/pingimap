@@ -42,12 +42,22 @@ git clone https://github.com/Anton4ikk/pingimap.git
 cd pingimap
 
 # Configure environment for production
+cp .env.example .env
 nano .env
 ```
 
 ### Step 3: Production Environment Configuration
 
-**⚠️ CRITICAL: Configure secure credentials (no defaults provided)**
+**⚠️ CRITICAL: Copy and configure environment file with secure credentials**
+
+Copy the example environment file and configure it:
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+**Required Configuration:**
 
 ```bash
 # Authentication (REQUIRED - set strong passwords)

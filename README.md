@@ -40,6 +40,7 @@ git clone https://github.com/Anton4ikk/pingimap.git
 cd pingimap
 
 # 2. Configure environment (REQUIRED)
+cp .env.example .env
 nano .env
 # Set secure passwords:
 # - ADMIN_PASSWORD=your-secure-password
