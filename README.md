@@ -12,7 +12,7 @@
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](docker-compose.yml)
 [![Node.js](https://img.shields.io/badge/node-20+-green.svg)](package.json)
 
-[🚀 Quick Start](#-quick-start) • [📖 Documentation](DEPLOYMENT.md) • [🛠️ Development](#️-development) • [🐛 Issues](https://github.com/Anton4ikk/pingimap/issues)
+[🌐 Live Demo](https://pingimap.com) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](DEPLOYMENT.md) • [🛠️ Development](#️-development) • [🐛 Issues](https://github.com/Anton4ikk/pingimap/issues)
 
 </div>
 
