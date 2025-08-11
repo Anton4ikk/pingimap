@@ -71,7 +71,7 @@ const requireAuth = async (request: any, reply: any) => {
 server.addHook('preHandler', requireAuth);
 
 // Authentication endpoints
-server.post('/auth/login', {
+server.post('/api/auth/login', {
   schema: {
     body: {
       type: 'object',
@@ -116,7 +116,7 @@ server.post('/auth/login', {
   }
 });
 
-server.get('/auth/status', async (request, reply) => {
+server.get('/api/auth/status', async (request, reply) => {
   const authHeader = request.headers.authorization;
   const isAuthenticated = authHeader &&
     authHeader.startsWith('Bearer ') &&
@@ -128,7 +128,7 @@ server.get('/auth/status', async (request, reply) => {
   });
 });
 
-server.get('/health', async () => {
+server.get('/api/health', async () => {
   try {
     await db.query('SELECT 1');
     const monitorStatus = getMonitoringStatus();

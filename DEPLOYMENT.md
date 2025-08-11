@@ -138,12 +138,7 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_buffering off;
 
-    # Backend API health endpoint
-    location = /health {
-        proxy_pass http://127.0.0.1:3001/health;
-    }
-
-    # Backend API routes (authentication, services, etc.)
+    # Backend API routes (authentication, services, health, config, etc.)
     location /api/ {
         proxy_pass http://127.0.0.1:3001/api/;
     }

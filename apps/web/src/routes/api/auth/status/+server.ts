@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ request }) => {
       headers.authorization = authHeader;
     }
 
-    const response = await fetch(`${API_BASE_URL}/auth/status`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/status`, {
       method: 'GET',
       headers,
     });
