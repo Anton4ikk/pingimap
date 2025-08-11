@@ -27,7 +27,7 @@
     try {
       loading = true;
       error = null;
-      const response = await fetch('/api/info');
+      const response = await fetch('/api/health');
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

@@ -277,21 +277,21 @@ sudo systemctl restart docker
 
 ```bash
 # 1. Test HTTP to HTTPS redirect
-curl -I http://pingimap.com
+curl -I http://domain.com
 
 # 2. Test HTTPS access
-curl -I https://pingimap.com
+curl -I https://domain.com
 
 # 3. Test API health
-curl https://pingimap.com/api/health
+curl https://domain.com/api/health
 
 # 4. Test admin authentication
-curl -X POST https://pingimap.com/api/auth/login \
+curl -X POST https://domain.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"password":"your-admin-password"}'
 
 # 5. Test service management (with token from step 4)
-curl -X POST https://pingimap.com/api/services \
+curl -X POST https://domain.com/api/services \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"name":"Test Service","url":"https://google.com"}'
