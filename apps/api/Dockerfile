@@ -70,7 +70,7 @@ COPY scripts/wait-for.sh /usr/local/bin/wait-for
 RUN chmod +x /usr/local/bin/wait-for
 
 # Create a startup script
-RUN printf '#!/bin/sh\ncd apps/api\nnpx prisma db push\nnode dist/server.js\n' > /usr/local/bin/start-api.sh
+RUN printf '#!/bin/sh\ncd apps/api\nnpx prisma migrate deploy\nnpx prisma generate\nnode dist/server.js\n' > /usr/local/bin/start-api.sh
 RUN chmod +x /usr/local/bin/start-api.sh
 
 # Change ownership of the app directory to fastify user
