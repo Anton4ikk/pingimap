@@ -39,7 +39,7 @@ server.register(import('@fastify/cors'), {
 // Authentication middleware
 const requireAuth = async (request: any, reply: any) => {
   // Skip auth for GET requests and auth endpoints
-  if (request.method === 'GET' || request.url.startsWith('/auth/')) {
+  if (request.method === 'GET' || request.url.startsWith('/api/auth/')) {
     return;
   }
 
