@@ -6,6 +6,9 @@ dist/
 build/
 *.tsbuildinfo
 
+# Prisma generated files
+**/generated/
+
 # SvelteKit
 .svelte-kit/
 
@@ -21,4 +24,4 @@ build/
 .env.*.local
 
 # OS files
-# .DS_Store
+.DS_Store

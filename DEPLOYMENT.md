@@ -140,7 +140,7 @@ server {
 
     # Backend API routes (authentication, services, health, config, etc.)
     location /api/ {
-        proxy_pass http://127.0.0.1:3001/api/;
+        proxy_pass http://127.0.0.1:3001;
     }
 
     # Web Frontend - SvelteKit app (catch-all)
