@@ -7,6 +7,7 @@ interface Service {
   url: string;
   lastLatencyMs: number | null;
   lastStatus: string | null;
+  lastHttpCode: number | null;
   lastCheckedAt: string | null;
   createdAt: string;
   updatedAt: string;

@@ -9,6 +9,7 @@
     url: string;
     lastLatencyMs: number | null;
     lastStatus: string | null;
+    lastHttpCode: number | null;
     lastCheckedAt: string | null;
     createdAt: string;
     updatedAt: string;
@@ -33,7 +34,6 @@
 
   let overlayService: Service | null = null;
   let overlayPosition = { x: 0, y: 0 };
-  let isTouch = false;
 
   $: ({ services, loading, error } = $state);
 
@@ -108,34 +108,48 @@
     return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   }
 
-  function showOverlay(service: Service, event: MouseEvent | TouchEvent) {
-    overlayService = service;
-
-    if (event instanceof TouchEvent) {
-      isTouch = true;
-      const touch = event.touches[0] || event.changedTouches[0];
-      if (touch) {
-        overlayPosition = { x: touch.clientX, y: touch.clientY };
-      }
-    } else {
-      isTouch = false;
-      overlayPosition = { x: event.clientX, y: event.clientY };
+  function calculateTooltipPosition(clickX: number, clickY: number): { x: number, y: number } {
+    const tooltipWidth = 280; // min-width from CSS
+    const tooltipHeight = 200; // estimated height
+    const margin = 10; // margin from screen edge
+    
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    let x = clickX;
+    let y = clickY;
+    
+    // Check right edge
+    if (x + tooltipWidth / 2 > viewportWidth - margin) {
+      x = viewportWidth - tooltipWidth / 2 - margin;
     }
-  }
-
-  function hideOverlay() {
-    if (!isTouch) {
-      overlayService = null;
+    
+    // Check left edge  
+    if (x - tooltipWidth / 2 < margin) {
+      x = tooltipWidth / 2 + margin;
     }
+    
+    // Check top edge (tooltip shows above click point)
+    if (y - tooltipHeight < margin) {
+      y = tooltipHeight + margin;
+    }
+    
+    // Check bottom edge
+    if (y > viewportHeight - margin) {
+      y = viewportHeight - margin;
+    }
+    
+    return { x, y };
   }
 
   function handleTileClick(service: Service, event: MouseEvent) {
-    if (isTouch) {
-      if (overlayService?.id === service.id) {
-        overlayService = null;
-      } else {
-        showOverlay(service, event);
-      }
+    event.stopPropagation();
+    
+    if (overlayService?.id === service.id) {
+      overlayService = null;
+    } else {
+      overlayService = service;
+      overlayPosition = calculateTooltipPosition(event.clientX, event.clientY);
     }
   }
 
@@ -146,11 +160,10 @@
         overlayService = null;
       } else {
         const rect = (event.target as HTMLElement).getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
         overlayService = service;
-        overlayPosition = {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2
-        };
+        overlayPosition = calculateTooltipPosition(centerX, centerY);
       }
     } else if (event.key === 'Escape') {
       overlayService = null;
@@ -233,10 +246,7 @@
           tabindex="0"
           role="button"
           aria-label="Service {service.name}: {getStatusText(service.lastStatus)}, {formatRelativeTime(service.lastCheckedAt)}"
-          on:mouseenter={(e) => showOverlay(service, e)}
-          on:mouseleave={hideOverlay}
-          on:click={(e) => handleTileClick(service, e)}
-          on:touchstart={(e) => showOverlay(service, e)}
+          on:click|stopPropagation={(e) => handleTileClick(service, e)}
           on:keydown={(e) => handleKeydown(service, e)}
         >
           <div class="service-name" title={service.name}>
@@ -274,8 +284,10 @@
         </span>
       </div>
       <div class="overlay-field">
-        <span class="overlay-label">Last checked:</span>
-        <span class="overlay-value">{formatRelativeTime(overlayService.lastCheckedAt)}</span>
+        <span class="overlay-label">Code:</span>
+        <span class="overlay-value">
+          {overlayService.lastHttpCode !== null ? overlayService.lastHttpCode : 'N/A'}
+        </span>
       </div>
     </div>
   </div>

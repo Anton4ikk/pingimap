@@ -250,4 +250,26 @@ describe('httpPing', () => {
       latencyMs: 80
     });
   });
+
+  it('should treat 429 status code as UP', async () => {
+    mockPerformanceNow
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(120);
+
+    mockSetTimeout.mockReturnValue(666);
+
+    const mockResponse = {
+      ok: false,
+      status: 429
+    };
+    mockFetch.mockResolvedValue(mockResponse);
+
+    const result = await httpPing('https://example.com');
+
+    expect(result).toEqual({
+      ok: true,
+      statusCode: 429,
+      latencyMs: 120
+    });
+  });
 });

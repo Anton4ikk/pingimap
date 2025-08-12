@@ -307,6 +307,10 @@ cp docker-compose.yml docker-compose.yml.backup
 
 ### Update Application
 
+⚠️ **Before updating, export your services to prevent data loss:**
+
+**Update Process:**
+
 ```bash
 # Pull latest changes
 git pull origin main
@@ -318,6 +322,11 @@ docker compose up -d
 
 # Verify health
 docker compose ps
+
+# If needed, restore services from backup:
+# 1. Login to admin panel
+# 2. Go to Services → Import Services
+# 3. Upload services from backup json
 ```
 
 ### Database Migrations

@@ -27,6 +27,7 @@ model Service {
   url             String        @unique
   lastLatencyMs   Int?          @map("last_latency_ms")
   lastStatus      ServiceStatus? @map("last_status")
+  lastHttpCode    Int?          @map("last_http_code")
   lastCheckedAt   DateTime?     @map("last_checked_at") @db.Timestamptz
   createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz

@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🚀 PingiMap
+<img src="./media/logo.png" alt="PingiMap Logo" width="300" height="300" style="border-radius: 20px;">
 
-<img src="./media/logo.png" alt="PingiMap Logo" width="120" height="120" style="border-radius: 20px;">
+# 🚀 PingiMap
 
 **A modern service monitoring platform with real-time status tracking, interactive dashboard, and role-based access control.**
 

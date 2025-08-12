@@ -7,6 +7,7 @@ export type CreateServiceData = {
   url: string
   lastLatencyMs?: number
   lastStatus?: ServiceStatus
+  lastHttpCode?: number
   lastCheckedAt?: Date
 }
 
@@ -24,6 +25,7 @@ export type BatchServiceUpdate = {
   id: string
   status: ServiceStatus
   latencyMs?: number
+  httpCode?: number
 }
 
 export type BatchServiceCheckData = CreateServiceCheckData
@@ -69,13 +71,15 @@ export const servicesDb = {
   async updateStatus(
     id: string,
     status: ServiceStatus,
-    latencyMs?: number
+    latencyMs?: number,
+    httpCode?: number
   ): Promise<Service> {
     return prisma.service.update({
       where: { id },
       data: {
         lastStatus: status,
         lastLatencyMs: latencyMs ?? null,
+        lastHttpCode: httpCode ?? null,
         lastCheckedAt: new Date(),
       },
     })
@@ -140,6 +144,7 @@ export const servicesDb = {
           data: {
             lastStatus: update.status,
             lastLatencyMs: update.latencyMs ?? null,
+            lastHttpCode: update.httpCode ?? null,
             lastCheckedAt: now,
           },
         })

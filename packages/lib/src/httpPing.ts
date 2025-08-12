@@ -41,7 +41,7 @@ export async function httpPing(
     const latencyMs = Math.round(endTime - startTime);
 
     return {
-      ok: response.ok,
+      ok: response.ok || response.status === 429,
       statusCode: response.status,
       latencyMs
     };

@@ -210,6 +210,7 @@ server.get('/api/services', {
             url: { type: 'string' },
             lastLatencyMs: { type: ['number', 'null'] },
             lastStatus: { type: ['string', 'null'], enum: ['UP', 'SLOW', 'DOWN', null] },
+            lastHttpCode: { type: ['number', 'null'] },
             lastCheckedAt: { type: ['string', 'null'] },
             createdAt: { type: 'string' },
             updatedAt: { type: 'string' }

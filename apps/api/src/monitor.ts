@@ -239,16 +239,6 @@ async function performSinglePing(url: string, headers: Record<string, string>): 
     }
 
     // Enhanced status classification
-    if (response.status === 403 && latencyMs < 1000) {
-      // Fast 403 likely indicates bot detection
-      return {
-        status: ServiceStatus.BLOCKED,
-        latencyMs,
-        httpCode: response.status,
-        error: `HTTP ${response.status}: ${response.statusText} (likely bot detection)`,
-      };
-    }
-
     if (response.status === 400) {
       // Bad request - could be bot detection or malformed request
       return {
@@ -259,6 +249,17 @@ async function performSinglePing(url: string, headers: Record<string, string>): 
       };
     }
 
+    if (response.status === 401 || response.status === 403) {
+      // Unauthorized/Forbidden - service is working, just denying access
+      if (latencyMs <= FAST_THRESHOLD_MS) {
+        return { status: ServiceStatus.UP, latencyMs, httpCode: response.status };
+      } else if (latencyMs <= SLOW_THRESHOLD_MS) {
+        return { status: ServiceStatus.SLOW, latencyMs, httpCode: response.status };
+      } else {
+        return { status: ServiceStatus.DOWN, latencyMs, httpCode: response.status };
+      }
+    }
+
     if (response.status >= 500) {
       // Server errors - actual service issues
       return {
@@ -267,6 +268,17 @@ async function performSinglePing(url: string, headers: Record<string, string>): 
         httpCode: response.status,
         error: `HTTP ${response.status}: ${response.statusText}`,
       };
+    }
+
+    if (response.status === 429) {
+      // Too Many Requests - treat as UP/SLOW/DOWN based on latency (service is working)
+      if (latencyMs <= FAST_THRESHOLD_MS) {
+        return { status: ServiceStatus.UP, latencyMs, httpCode: response.status };
+      } else if (latencyMs <= SLOW_THRESHOLD_MS) {
+        return { status: ServiceStatus.SLOW, latencyMs, httpCode: response.status };
+      } else {
+        return { status: ServiceStatus.DOWN, latencyMs, httpCode: response.status };
+      }
     }
 
     if (response.status >= 400) {
@@ -384,6 +396,7 @@ async function processBatch(services: any[], batchIndex: number): Promise<void> 
       id: service.id,
       status: result.status,
       ...(result.latencyMs !== null && { latencyMs: result.latencyMs }),
+      ...(result.httpCode !== null && result.httpCode !== undefined && { httpCode: result.httpCode }),
     }));
 
     const checkRecords: BatchServiceCheckData[] = results.map(({ service, result }) => ({
