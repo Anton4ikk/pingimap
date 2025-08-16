@@ -15,7 +15,8 @@ datasource db {
 }
 
 enum ServiceStatus {
-  UP
+  FAST
+  NORMAL
   SLOW
   DOWN
   BLOCKED

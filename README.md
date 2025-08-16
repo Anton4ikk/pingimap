@@ -73,9 +73,10 @@ docker compose exec api pnpm --filter=@pingimap/api seed
 4. Service monitoring starts automatically
 
 ### Viewing Service Status
-- **Green tiles** = Service UP (fast response)
-- **Yellow tiles** = Service SLOW (delayed response)
-- **Red tiles** = Service DOWN (timeout/error)
+- **Dark Green tiles** = Service FAST (0-1000ms response)
+- **Light Green tiles** = Service NORMAL (1001-2000ms response)
+- **Yellow tiles** = Service SLOW (2001-5000ms response)
+- **Red tiles** = Service DOWN (>5000ms or error)
 - **Gray tiles** = Not yet checked
 - Hover/tap tiles for detailed information
 
@@ -130,8 +131,10 @@ API_PORT=3001
 
 # Monitoring Thresholds
 PING_TIMEOUT_MS=5000      # Max response time before timeout
-FAST_THRESHOLD_MS=1000    # Green status threshold
-SLOW_THRESHOLD_MS=2000    # Yellow status threshold
+FAST_THRESHOLD_MS=1000    # Dark green status (0-1000ms)
+NORMAL_THRESHOLD_MS=2000  # Light green status (1001-2000ms)
+SLOW_THRESHOLD_MS=4000    # Yellow status (2001-5000ms)
+                          # Red status (>5000ms or timeout/error)
 ```
 
 ### Port Configuration

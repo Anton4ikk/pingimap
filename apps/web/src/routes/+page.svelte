@@ -38,7 +38,8 @@
   $: ({ services, loading, error } = $state);
 
   const statusColors: Record<string, string> = {
-    'UP': 'var(--status-up)',
+    'FAST': 'var(--status-fast)',
+    'NORMAL': 'var(--status-normal)',
     'SLOW': 'var(--status-slow)',
     'DOWN': 'var(--status-down)',
     'null': 'var(--status-unknown)'
@@ -220,8 +221,12 @@
     {#if config}
       <div class="legend">
         <div class="legend-item">
-          <div class="legend-color" style="background-color: {statusColors['UP']}"></div>
-          <span>Up ({config.labels.up})</span>
+          <div class="legend-color" style="background-color: {statusColors['FAST']}"></div>
+          <span>Fast ({config.labels.fast})</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: {statusColors['NORMAL']}"></div>
+          <span>Normal ({config.labels.normal})</span>
         </div>
         <div class="legend-item">
           <div class="legend-color" style="background-color: {statusColors['SLOW']}"></div>
@@ -510,7 +515,12 @@
     flex: 1;
   }
 
-  .overlay-value.status-up {
+  .overlay-value.status-fast {
+    color: var(--success-700);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .overlay-value.status-normal {
     color: var(--success-600);
     font-weight: var(--font-weight-medium);
   }

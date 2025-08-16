@@ -172,7 +172,8 @@ server.get('/api/config', {
           labels: {
             type: 'object',
             properties: {
-              up: { type: 'string' },
+              fast: { type: 'string' },
+              normal: { type: 'string' },
               slow: { type: 'string' },
               down: { type: 'string' },
               notChecked: { type: 'string' }
@@ -187,8 +188,9 @@ server.get('/api/config', {
   return {
     thresholds: monitorStatus.thresholds,
     labels: {
-      up: `≤ ${monitorStatus.thresholds.fast}ms`,
-      slow: `${monitorStatus.thresholds.fast + 1}-${monitorStatus.thresholds.slow}ms`,
+      fast: `≤ ${monitorStatus.thresholds.fast}ms`,
+      normal: `${monitorStatus.thresholds.fast + 1}-${monitorStatus.thresholds.normal}ms`,
+      slow: `${monitorStatus.thresholds.normal + 1}-${monitorStatus.thresholds.slow}ms`,
       down: `> ${monitorStatus.thresholds.slow}ms or error`,
       notChecked: 'Not checked'
     },
@@ -209,7 +211,7 @@ server.get('/api/services', {
             name: { type: 'string' },
             url: { type: 'string' },
             lastLatencyMs: { type: ['number', 'null'] },
-            lastStatus: { type: ['string', 'null'], enum: ['UP', 'SLOW', 'DOWN', null] },
+            lastStatus: { type: ['string', 'null'], enum: ['FAST', 'NORMAL', 'SLOW', 'DOWN', null] },
             lastHttpCode: { type: ['number', 'null'] },
             lastCheckedAt: { type: ['string', 'null'] },
             createdAt: { type: 'string' },
@@ -246,7 +248,7 @@ server.post('/api/services', {
           name: { type: 'string' },
           url: { type: 'string' },
           lastLatencyMs: { type: ['number', 'null'] },
-          lastStatus: { type: ['string', 'null'], enum: ['UP', 'SLOW', 'DOWN', null] },
+          lastStatus: { type: ['string', 'null'], enum: ['FAST', 'NORMAL', 'SLOW', 'DOWN', null] },
           lastCheckedAt: { type: ['string', 'null'] },
           createdAt: { type: 'string' },
           updatedAt: { type: 'string' }
@@ -317,7 +319,7 @@ server.delete('/api/services/:id', {
               name: { type: 'string' },
               url: { type: 'string' },
               lastLatencyMs: { type: ['number', 'null'] },
-              lastStatus: { type: ['string', 'null'], enum: ['UP', 'SLOW', 'DOWN', null] },
+              lastStatus: { type: ['string', 'null'], enum: ['FAST', 'NORMAL', 'SLOW', 'DOWN', null] },
               lastCheckedAt: { type: ['string', 'null'] },
               createdAt: { type: 'string' },
               updatedAt: { type: 'string' }
@@ -394,7 +396,7 @@ server.put('/api/services/:id', {
           name: { type: 'string' },
           url: { type: 'string' },
           lastLatencyMs: { type: ['number', 'null'] },
-          lastStatus: { type: ['string', 'null'], enum: ['UP', 'SLOW', 'DOWN', null] },
+          lastStatus: { type: ['string', 'null'], enum: ['FAST', 'NORMAL', 'SLOW', 'DOWN', null] },
           lastCheckedAt: { type: ['string', 'null'] },
           createdAt: { type: 'string' },
           updatedAt: { type: 'string' }
@@ -576,7 +578,7 @@ server.get('/api/services/:id/checks', {
             serviceId: { type: 'string' },
             ts: { type: 'string' },
             latencyMs: { type: ['number', 'null'] },
-            status: { type: 'string', enum: ['UP', 'SLOW', 'DOWN'] },
+            status: { type: 'string', enum: ['FAST', 'NORMAL', 'SLOW', 'DOWN'] },
             httpCode: { type: ['number', 'null'] },
             errorText: { type: ['string', 'null'] }
           }

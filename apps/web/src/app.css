@@ -43,7 +43,8 @@
   --error-700: #b91c1c;
 
   /* Status colors */
-  --status-up: var(--success-500);
+  --status-fast: var(--success-700);
+  --status-normal: var(--success-500);
   --status-slow: var(--warning-500);
   --status-down: var(--error-500);
   --status-unknown: var(--gray-400);
@@ -337,9 +338,14 @@ body {
   letter-spacing: 0.025em;
 }
 
-.status-up {
+.status-fast {
   background-color: var(--success-100);
   color: var(--success-700);
+}
+
+.status-normal {
+  background-color: var(--success-100);
+  color: var(--success-600);
 }
 
 .status-slow {

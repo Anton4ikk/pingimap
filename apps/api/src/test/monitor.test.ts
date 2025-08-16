@@ -7,7 +7,8 @@ import { prisma } from './setup.js'
 
 const PING_TIMEOUT_MS = 5000
 const FAST_THRESHOLD_MS = 1000
-const SLOW_THRESHOLD_MS = 2000
+const NORMAL_THRESHOLD_MS = 2000
+const SLOW_THRESHOLD_MS = 5000
 
 interface PingResult {
   status: ServiceStatus
@@ -44,7 +45,9 @@ async function pingService(url: string): Promise<PingResult> {
     }
 
     if (latencyMs <= FAST_THRESHOLD_MS) {
-      return { status: ServiceStatus.UP, latencyMs, httpCode: response.status }
+      return { status: ServiceStatus.FAST, latencyMs, httpCode: response.status }
+    } else if (latencyMs <= NORMAL_THRESHOLD_MS) {
+      return { status: ServiceStatus.NORMAL, latencyMs, httpCode: response.status }
     } else if (latencyMs <= SLOW_THRESHOLD_MS) {
       return { status: ServiceStatus.SLOW, latencyMs, httpCode: response.status }
     } else {
@@ -102,7 +105,7 @@ describe('Monitor/Worker Tests', () => {
   })
 
   describe('pingService', () => {
-    it('should return UP status for fast response (< 1000ms)', async () => {
+    it('should return FAST status for fast response (< 1000ms)', async () => {
       // Mock a successful fast response
       mockFetch.mockResolvedValueOnce({
         status: 200,
@@ -120,7 +123,7 @@ describe('Monitor/Worker Tests', () => {
       const result = await pingService('https://example.com')
 
       expect(result).toEqual({
-        status: ServiceStatus.UP,
+        status: ServiceStatus.FAST,
         latencyMs: 500,
         httpCode: 200
       })
@@ -274,7 +277,7 @@ describe('Monitor/Worker Tests', () => {
   })
 
   describe('Service Status Updates', () => {
-    it('should update service status and record check for UP status', async () => {
+    it('should update service status and record check for FAST status', async () => {
       // Create a test service
       const service = await servicesDb.create({
         name: 'Test Service',
@@ -299,7 +302,7 @@ describe('Monitor/Worker Tests', () => {
 
       // Check that service was updated
       const updatedService = await servicesDb.findById(service.id)
-      expect(updatedService?.lastStatus).toBe(ServiceStatus.UP)
+      expect(updatedService?.lastStatus).toBe(ServiceStatus.FAST)
       expect(updatedService?.lastLatencyMs).toBe(500)
       expect(updatedService?.lastCheckedAt).toBeDefined()
 
@@ -308,7 +311,7 @@ describe('Monitor/Worker Tests', () => {
       expect(checks).toHaveLength(1)
       expect(checks[0]).toMatchObject({
         serviceId: service.id,
-        status: ServiceStatus.UP,
+        status: ServiceStatus.FAST,
         latencyMs: 500,
         httpCode: 200,
         errorText: null

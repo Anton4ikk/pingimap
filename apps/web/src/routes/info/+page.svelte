@@ -11,6 +11,7 @@
       interval: string;
       thresholds: {
         fast: number;
+        normal: number;
         slow: number;
         timeout: number;
       };
@@ -112,6 +113,30 @@
         </div>
       </div>
 
+      {#if infoData.monitor.thresholds}
+        <div class="thresholds-section">
+          <h3>Monitoring Thresholds</h3>
+          <div class="thresholds-grid">
+            <div class="threshold-item fast">
+              <span class="threshold-label">Fast</span>
+              <span class="threshold-value">≤ {infoData.monitor.thresholds.fast}ms</span>
+            </div>
+            <div class="threshold-item normal">
+              <span class="threshold-label">Normal</span>
+              <span class="threshold-value">{infoData.monitor.thresholds.fast + 1}-{infoData.monitor.thresholds.normal}ms</span>
+            </div>
+            <div class="threshold-item slow">
+              <span class="threshold-label">Slow</span>
+              <span class="threshold-value">{infoData.monitor.thresholds.normal + 1}-{infoData.monitor.thresholds.slow}ms</span>
+            </div>
+            <div class="threshold-item down">
+              <span class="threshold-label">Down</span>
+              <span class="threshold-value">> {infoData.monitor.thresholds.slow}ms</span>
+            </div>
+          </div>
+        </div>
+      {/if}
+
       <div class="metrics-grid">
         <div class="metric-card">
           <div class="metric-header">
@@ -163,26 +188,6 @@
           </div>
         {/if}
       </div>
-
-      {#if infoData.monitor.thresholds}
-        <div class="thresholds-section">
-          <h3>Monitoring Thresholds</h3>
-          <div class="thresholds-grid">
-            <div class="threshold-item">
-              <span class="threshold-label">Fast</span>
-              <span class="threshold-value">≤ {infoData.monitor.thresholds.fast}ms</span>
-            </div>
-            <div class="threshold-item">
-              <span class="threshold-label">Slow</span>
-              <span class="threshold-value">{infoData.monitor.thresholds.fast + 1}-{infoData.monitor.thresholds.slow}ms</span>
-            </div>
-            <div class="threshold-item">
-              <span class="threshold-label">Timeout</span>
-              <span class="threshold-value">{infoData.monitor.thresholds.timeout}ms</span>
-            </div>
-          </div>
-        </div>
-      {/if}
 
       <div class="source-section">
         <h3>Source Code</h3>
@@ -389,6 +394,22 @@
     background: var(--gray-50);
     border-radius: var(--radius-md);
     border: 1px solid var(--gray-200);
+  }
+
+  .threshold-item.fast {
+    border-left: 4px solid var(--status-fast);
+  }
+
+  .threshold-item.normal {
+    border-left: 4px solid var(--status-normal);
+  }
+
+  .threshold-item.slow {
+    border-left: 4px solid var(--status-slow);
+  }
+
+  .threshold-item.down {
+    border-left: 4px solid var(--status-down);
   }
 
   .threshold-label {

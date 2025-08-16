@@ -2,7 +2,8 @@ import { BatchServiceCheckData, BatchServiceUpdate, servicesDb, ServiceStatus } 
 
 const PING_TIMEOUT_MS = parseInt(process.env.PING_TIMEOUT_MS || '5000', 10);
 const FAST_THRESHOLD_MS = parseInt(process.env.FAST_THRESHOLD_MS || '1000', 10);
-const SLOW_THRESHOLD_MS = parseInt(process.env.SLOW_THRESHOLD_MS || '2000', 10);
+const NORMAL_THRESHOLD_MS = parseInt(process.env.NORMAL_THRESHOLD_MS || '2000', 10);
+const SLOW_THRESHOLD_MS = parseInt(process.env.SLOW_THRESHOLD_MS || '5000', 10);
 const MONITOR_INTERVAL_MS = 30000; // 30 seconds
 const MAX_RETRY_ATTEMPTS = 1; // Reduced from 2 to 1 for faster processing
 const BATCH_SIZE = 75; // Process 75 services per batch
@@ -252,7 +253,9 @@ async function performSinglePing(url: string, headers: Record<string, string>): 
     if (response.status === 401 || response.status === 403) {
       // Unauthorized/Forbidden - service is working, just denying access
       if (latencyMs <= FAST_THRESHOLD_MS) {
-        return { status: ServiceStatus.UP, latencyMs, httpCode: response.status };
+        return { status: ServiceStatus.FAST, latencyMs, httpCode: response.status };
+      } else if (latencyMs <= NORMAL_THRESHOLD_MS) {
+        return { status: ServiceStatus.NORMAL, latencyMs, httpCode: response.status };
       } else if (latencyMs <= SLOW_THRESHOLD_MS) {
         return { status: ServiceStatus.SLOW, latencyMs, httpCode: response.status };
       } else {
@@ -271,9 +274,11 @@ async function performSinglePing(url: string, headers: Record<string, string>): 
     }
 
     if (response.status === 429) {
-      // Too Many Requests - treat as UP/SLOW/DOWN based on latency (service is working)
+      // Too Many Requests - treat as FAST/NORMAL/SLOW/DOWN based on latency (service is working)
       if (latencyMs <= FAST_THRESHOLD_MS) {
-        return { status: ServiceStatus.UP, latencyMs, httpCode: response.status };
+        return { status: ServiceStatus.FAST, latencyMs, httpCode: response.status };
+      } else if (latencyMs <= NORMAL_THRESHOLD_MS) {
+        return { status: ServiceStatus.NORMAL, latencyMs, httpCode: response.status };
       } else if (latencyMs <= SLOW_THRESHOLD_MS) {
         return { status: ServiceStatus.SLOW, latencyMs, httpCode: response.status };
       } else {
@@ -293,7 +298,9 @@ async function performSinglePing(url: string, headers: Record<string, string>): 
 
     // Success - check latency thresholds
     if (latencyMs <= FAST_THRESHOLD_MS) {
-      return { status: ServiceStatus.UP, latencyMs, httpCode: response.status };
+      return { status: ServiceStatus.FAST, latencyMs, httpCode: response.status };
+    } else if (latencyMs <= NORMAL_THRESHOLD_MS) {
+      return { status: ServiceStatus.NORMAL, latencyMs, httpCode: response.status };
     } else if (latencyMs <= SLOW_THRESHOLD_MS) {
       return { status: ServiceStatus.SLOW, latencyMs, httpCode: response.status };
     } else {
@@ -340,7 +347,7 @@ async function pingService(url: string): Promise<PingResult> {
       const retryResult = await performSinglePing(url, retryHeaders);
 
       // If we get a successful response, use it
-      if (retryResult.status === ServiceStatus.UP || retryResult.status === ServiceStatus.SLOW) {
+      if (retryResult.status === ServiceStatus.FAST || retryResult.status === ServiceStatus.NORMAL || retryResult.status === ServiceStatus.SLOW) {
         result = retryResult;
         break;
       }
@@ -366,7 +373,8 @@ async function processBatch(services: any[], batchIndex: number): Promise<void> 
     const result = await pingService(service.url);
 
     const statusEmoji = {
-      [ServiceStatus.UP]: '🟢',
+      [ServiceStatus.FAST]: '🟢',
+      [ServiceStatus.NORMAL]: '🟢',
       [ServiceStatus.SLOW]: '🟡',
       [ServiceStatus.DOWN]: '🔴',
       [ServiceStatus.BLOCKED]: '🟠',
@@ -494,12 +502,13 @@ export function stopMonitoring(): void {
   }
 }
 
-export function getMonitoringStatus(): { running: boolean; interval: number; thresholds: { fast: number; slow: number; timeout: number } } {
+export function getMonitoringStatus(): { running: boolean; interval: number; thresholds: { fast: number; normal: number; slow: number; timeout: number } } {
   return {
     running: monitorInterval !== null,
     interval: MONITOR_INTERVAL_MS,
     thresholds: {
       fast: FAST_THRESHOLD_MS,
+      normal: NORMAL_THRESHOLD_MS,
       slow: SLOW_THRESHOLD_MS,
       timeout: PING_TIMEOUT_MS,
     },
