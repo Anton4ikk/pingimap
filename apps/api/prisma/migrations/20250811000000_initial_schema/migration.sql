@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "ServiceStatus" AS ENUM ('UP', 'SLOW', 'DOWN', 'BLOCKED');
+CREATE TYPE "ServiceStatus" AS ENUM ('FAST', 'NORMAL', 'SLOW', 'DOWN', 'BLOCKED');
 
 -- CreateTable
 CREATE TABLE "services" (

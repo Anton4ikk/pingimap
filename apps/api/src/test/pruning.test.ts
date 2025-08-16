@@ -21,7 +21,7 @@ describe('Service Checks Pruning Logic', () => {
       for (let i = 0; i < 10; i++) {
         await servicesDb.recordCheck({
           serviceId: service.id,
-          status: ServiceStatus.UP,
+          status: ServiceStatus.FAST,
           latencyMs: 100 + i,
           httpCode: 200,
           errorText: null
@@ -46,7 +46,7 @@ describe('Service Checks Pruning Logic', () => {
         checkPromises.push(
           servicesDb.recordCheck({
             serviceId: service.id,
-            status: ServiceStatus.UP,
+            status: ServiceStatus.FAST,
             latencyMs: 100 + i,
             httpCode: 200,
             errorText: null
@@ -89,7 +89,7 @@ describe('Service Checks Pruning Logic', () => {
         promises.push(
           servicesDb.recordCheck({
             serviceId: service1.id,
-            status: ServiceStatus.UP,
+            status: ServiceStatus.FAST,
             latencyMs: 100 + i,
             httpCode: 200,
             errorText: null
@@ -133,7 +133,7 @@ describe('Service Checks Pruning Logic', () => {
       })
 
       // Record checks with different statuses in a specific order
-      const statuses = [ServiceStatus.UP, ServiceStatus.SLOW, ServiceStatus.DOWN]
+      const statuses = [ServiceStatus.FAST, ServiceStatus.SLOW, ServiceStatus.DOWN]
 
       for (let i = 0; i < 60; i++) {
         await servicesDb.recordCheck({
@@ -178,7 +178,7 @@ describe('Service Checks Pruning Logic', () => {
       for (let i = 0; i < 50; i++) {
         await servicesDb.recordCheck({
           serviceId: service.id,
-          status: ServiceStatus.UP,
+          status: ServiceStatus.FAST,
           latencyMs: 100 + i,
           httpCode: 200,
           errorText: null
@@ -225,7 +225,7 @@ describe('Service Checks Pruning Logic', () => {
         concurrentChecks.push(
           servicesDb.recordCheck({
             serviceId: service.id,
-            status: ServiceStatus.UP,
+            status: ServiceStatus.FAST,
             latencyMs: 100 + i,
             httpCode: 200,
             errorText: null
@@ -243,7 +243,7 @@ describe('Service Checks Pruning Logic', () => {
       // Verify no data corruption occurred
       checks.forEach(check => {
         expect(check.serviceId).toBe(service.id)
-        expect(check.status).toBe(ServiceStatus.UP)
+        expect(check.status).toBe(ServiceStatus.FAST)
         expect(check.latencyMs).toBeGreaterThanOrEqual(100)
         expect(check.httpCode).toBe(200)
         expect(check.errorText).toBeNull()

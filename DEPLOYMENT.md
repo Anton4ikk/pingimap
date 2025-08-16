@@ -75,7 +75,8 @@ API_PORT=3001    # Internal port (nginx will proxy)
 # Monitoring Configuration
 PING_TIMEOUT_MS=5000
 FAST_THRESHOLD_MS=1000
-SLOW_THRESHOLD_MS=2000
+NORMAL_THRESHOLD_MS=2000
+SLOW_THRESHOLD_MS=4000
 
 # Database Ports (keep internal)
 POSTGRES_PORT=5432
@@ -367,9 +368,11 @@ Adjust monitoring settings for your network:
 
 ```bash
 # For slower networks, increase timeouts
-PING_TIMEOUT_MS=10000
-FAST_THRESHOLD_MS=2000
-SLOW_THRESHOLD_MS=5000
+PING_TIMEOUT_MS=5000
+FAST_THRESHOLD_MS=2000      # Dark green (0-2000ms)
+NORMAL_THRESHOLD_MS=5000    # Light green (2001-5000ms)
+SLOW_THRESHOLD_MS=10000     # Yellow (5001-10000ms)
+                            # Red (>10000ms or error)
 ```
 
 ## 🆘 Troubleshooting
