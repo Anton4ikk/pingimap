@@ -2,6 +2,8 @@
 
 <img src="./media/logo.png" alt="PingiMap Logo" width="300" height="300" style="border-radius: 20px;">
 
+## 🌟 [**LIVE DEMO - pingimap.com**](https://pingimap.com) 🌟
+
 # 🚀 PingiMap
 
 **A modern service monitoring platform with real-time status tracking, interactive dashboard, and role-based access control.**
@@ -12,7 +14,7 @@
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](docker-compose.yml)
 [![Node.js](https://img.shields.io/badge/node-20+-green.svg)](package.json)
 
-[🌐 Live Demo](https://pingimap.com) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](DEPLOYMENT.md) • [🛠️ Development](#️-development) • [🐛 Issues](https://github.com/Anton4ikk/pingimap/issues)
+[🚀 Quick Start](#-quick-start) • [📖 Documentation](DEPLOYMENT.md) • [🛠️ Development](#️-development) • [🐛 Issues](https://github.com/Anton4ikk/pingimap/issues)
 
 </div>
 
